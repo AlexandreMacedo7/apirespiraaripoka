@@ -19,12 +19,18 @@ public class DenunciaService {
         this.repository = repository;
         this.mapper = denunciaMapper;
     }
+
     @Transactional
     public DenunciaDtoResponse create(CriarDenunciaDtoRequest dtoRequest) {
 
         var denuncia = mapper.toEntity(dtoRequest);
         repository.save(denuncia);
 
+        return mapper.toDto(denuncia);
+    }
+
+    public DenunciaDtoResponse getDenunciaById(Long id){
+        var denuncia = repository.findById(id).orElseThrow(()-> new RuntimeException("Denuncia não encontrada!"));
         return mapper.toDto(denuncia);
     }
 }
