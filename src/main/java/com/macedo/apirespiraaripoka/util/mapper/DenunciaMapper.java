@@ -26,7 +26,8 @@ public class DenunciaMapper {
                 denuncia.getEndereco(),
                 denuncia.getCoordenadasGeograficas(),
                 denuncia.getTipoDenuncia(),
-                denuncia.getDescricao());
+                denuncia.getDescricao(),
+                denuncia.getStatusDenuncia());
         return dtoResponse;
     }
 }
