@@ -49,14 +49,14 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(denunciaDto);
     }
 
-    @GetMapping
+    @GetMapping("/gerenciar")
     @Override
     public ResponseEntity<Page<DenunciaDtoResponse>> getAllDenuncia(Pageable pageable) {
         Page<DenunciaDtoResponse> page = service.getAllDenuncia(pageable);
         return ResponseEntity.ok().body(page);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/gerenciar/{id}")
     @Override
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         service.deleteById(id);
