@@ -2,8 +2,8 @@ package com.macedo.apirespiraaripoka.controller;
 
 import java.net.URI;
 
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,7 @@ import com.macedo.apirespiraaripoka.service.DenunciaService;
 
 import jakarta.validation.Valid;
 
-@RequestMapping("/denuncias")
+@RequestMapping("v1/denuncias/")
 @RestController
 public class DenunciaControllerImplements implements DenunciaInterface {
 
@@ -36,7 +36,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
 
         var denuncia = service.create(dtoRequest);
 
-        URI uri = uriComponentsBuilder.path("denuncias/{id}").buildAndExpand(denuncia.id()).toUri();
+        URI uri = uriComponentsBuilder.path("v1/denuncias/{id}").buildAndExpand(denuncia.id()).toUri();
 
         return ResponseEntity.created(uri).body(denuncia);
     }
@@ -48,16 +48,16 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(denunciaDto);
     }
 
+    @GetMapping
     @Override
     public ResponseEntity<Page<DenunciaDtoResponse>> getAllDenuncia(Pageable pageable) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllDenuncia'");
+        Page<DenunciaDtoResponse> page = service.getAllDenuncia(pageable);
+        return ResponseEntity.ok().body(page);
     }
 
     @Override
     public ResponseEntity<?> deleteById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        service.deleteById(id);
     }
 
 }
