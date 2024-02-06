@@ -1,6 +1,8 @@
 package com.macedo.apirespiraaripoka.entity;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,18 +16,21 @@ public class Denuncia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    LocalDateTime dateTime;
-    Localizacao Localizacao;
-    TipoDenuncia tipoDenuncia;
-    String descricao;
+    private ZonedDateTime dateTime;
+    private String endereco;
+    private String coordenadasGeograficas;
+    private TipoDenuncia tipoDenuncia;
+    private String descricao;
+
+    private static ZoneId manauszZoneId = ZoneId.of("America/Manaus");
 
     public Denuncia() {
     }
 
-    public Denuncia(LocalDateTime dateTime, Localizacao Localizacao, TipoDenuncia tipoDenuncia, String descricao) {
-
-        this.dateTime = dateTime;
-        this.Localizacao = Localizacao;
+    public Denuncia(String endereco, String coordenadasGeografica, TipoDenuncia tipoDenuncia, String descricao) {
+        this.dateTime = LocalDateTime.now().atZone(manauszZoneId);
+        this.endereco = endereco;
+        this.coordenadasGeograficas = coordenadasGeografica;
         this.tipoDenuncia = tipoDenuncia;
         this.descricao = descricao;
     }
@@ -34,12 +39,16 @@ public class Denuncia {
         return this.id;
     }
 
-    public LocalDateTime getDateTime() {
+    public ZonedDateTime getDateTime() {
         return this.dateTime;
     }
 
-    public Localizacao getLocalizacao() {
-        return this.Localizacao;
+    public String getEndereco() {
+        return this.endereco;
+    }
+
+    public String getCoordenadasGeograficas() {
+        return this.coordenadasGeograficas;
     }
 
     public TipoDenuncia getTipoDenuncia() {
@@ -49,5 +58,4 @@ public class Denuncia {
     public String getDescricao() {
         return this.descricao;
     }
-
 }
