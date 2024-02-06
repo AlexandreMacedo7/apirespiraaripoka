@@ -7,6 +7,8 @@ import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class DenunciaService {
 
@@ -17,17 +19,10 @@ public class DenunciaService {
         this.repository = repository;
         this.mapper = denunciaMapper;
     }
-
+    @Transactional
     public DenunciaDtoResponse create(CriarDenunciaDtoRequest dtoRequest) {
 
-        System.out.println(dtoRequest.coordenadasGeograficas());
-        System.out.println(dtoRequest.endereco());
-        System.out.println(dtoRequest.tipoDenuncia());
-        System.out.println(dtoRequest.descricao());
-
         var denuncia = mapper.toEntity(dtoRequest);
-
-        System.out.println(denuncia.getTipoDenuncia());
         repository.save(denuncia);
 
         return mapper.toDto(denuncia);
