@@ -41,4 +41,7 @@ public class DenunciaService {
         Page<Denuncia> denuncias = repository.findAll(pageable);
         return denuncias.map(mapper::toDto);
     }
+    public void deleteById(Long id){
+        repository.deleteById(id);
+    }
 }

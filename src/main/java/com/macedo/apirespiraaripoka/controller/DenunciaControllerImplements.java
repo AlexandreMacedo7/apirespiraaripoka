@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ import com.macedo.apirespiraaripoka.service.DenunciaService;
 
 import jakarta.validation.Valid;
 
-@RequestMapping("v1/denuncias/")
+@RequestMapping("/v1/denuncias")
 @RestController
 public class DenunciaControllerImplements implements DenunciaInterface {
 
@@ -36,7 +37,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
 
         var denuncia = service.create(dtoRequest);
 
-        URI uri = uriComponentsBuilder.path("v1/denuncias/{id}").buildAndExpand(denuncia.id()).toUri();
+        URI uri = uriComponentsBuilder.path("/v1/denuncias/{id}").buildAndExpand(denuncia.id()).toUri();
 
         return ResponseEntity.created(uri).body(denuncia);
     }
@@ -55,9 +56,11 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(page);
     }
 
+    @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<?> deleteById(Long id) {
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
         service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
