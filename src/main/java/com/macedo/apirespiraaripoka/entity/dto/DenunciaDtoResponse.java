@@ -2,7 +2,7 @@ package com.macedo.apirespiraaripoka.entity.dto;
 
 import java.time.ZonedDateTime;
 
-import com.macedo.apirespiraaripoka.entity.TipoDenuncia;
+import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
 public record DenunciaDtoResponse(
 

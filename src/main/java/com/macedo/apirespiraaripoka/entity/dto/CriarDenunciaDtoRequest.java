@@ -1,6 +1,6 @@
 package com.macedo.apirespiraaripoka.entity.dto;
 
-import com.macedo.apirespiraaripoka.entity.TipoDenuncia;
+import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

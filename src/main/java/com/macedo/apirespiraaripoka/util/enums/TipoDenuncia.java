@@ -1,4 +1,4 @@
-package com.macedo.apirespiraaripoka.entity;
+package com.macedo.apirespiraaripoka.util.enums;
 
 public enum TipoDenuncia {
 
