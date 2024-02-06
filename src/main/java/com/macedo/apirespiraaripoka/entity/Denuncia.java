@@ -3,14 +3,20 @@ package com.macedo.apirespiraaripoka.entity;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
+import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Table(name = "denuncias")
 @Entity
 public class Denuncia {
 
@@ -21,8 +27,11 @@ public class Denuncia {
     private ZonedDateTime dateTime;
     private String endereco;
     private String coordenadasGeograficas;
+    @Enumerated(EnumType.STRING)
     private TipoDenuncia tipoDenuncia;
     private String descricao;
+    @Enumerated(EnumType.STRING)
+    private StatusDenuncia status;
 
     private static ZoneId manauszZoneId = ZoneId.of("America/Manaus");
 
@@ -30,11 +39,12 @@ public class Denuncia {
     }
 
     public Denuncia(String endereco, String coordenadasGeografica, TipoDenuncia tipoDenuncia, String descricao) {
-        this.dateTime = LocalDateTime.now().atZone(manauszZoneId);
+        this.dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).atZone(manauszZoneId);
         this.endereco = endereco;
         this.coordenadasGeograficas = coordenadasGeografica;
         this.tipoDenuncia = tipoDenuncia;
         this.descricao = descricao;
+        this.status = StatusDenuncia.RECEBIDA;
     }
 
     public Long getId() {
@@ -59,5 +69,9 @@ public class Denuncia {
 
     public String getDescricao() {
         return this.descricao;
+    }
+
+    public StatusDenuncia getStatusDenuncia() {
+        return this.status;
     }
 }
