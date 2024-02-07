@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
+import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
@@ -34,8 +35,7 @@ public class DenunciaService {
     }
 
     public DenunciaDtoResponse getDenunciaById(Long id) {
-        var denuncia = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Denuncia não localizada!"));
+        var denuncia = findById(id);
         return mapper.toDto(denuncia);
     }
 
@@ -46,5 +46,22 @@ public class DenunciaService {
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public DenunciaDtoResponse updateDenuncia (Long id, AtualizarStatusDenunciaDtoRequest dtoRequest){
+        
+        Denuncia denuncia = findById(id);
+        
+        denuncia.atualizaStatusDenuncia(dtoRequest.statusDenuncia());
+
+        repository.save(denuncia);
+
+        return mapper.toDto(denuncia);
+    }
+
+    private Denuncia findById(Long id){
+        return repository.findById(id)
+        .orElseThrow(()-> new EntityNotFoundException("Denuncia não localizada"));
     }
 }

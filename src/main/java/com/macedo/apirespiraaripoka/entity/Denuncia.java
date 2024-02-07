@@ -74,4 +74,8 @@ public class Denuncia {
     public StatusDenuncia getStatusDenuncia() {
         return this.status;
     }
+
+    public void atualizaStatusDenuncia(StatusDenuncia status){
+        this.status = status;
+    }
 }
