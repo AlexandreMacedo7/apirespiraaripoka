@@ -12,6 +12,7 @@ import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
+import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -52,10 +53,10 @@ public class DenunciaService {
     }
 
     @Transactional
-    public DenunciaDtoResponse updateDenuncia (Long id, AtualizarStatusDenunciaDtoRequest dtoRequest){
-        
+    public DenunciaDtoResponse updateDenuncia(Long id, AtualizarStatusDenunciaDtoRequest dtoRequest) {
+
         Denuncia denuncia = findById(id);
-        
+
         denuncia.atualizaStatusDenuncia(dtoRequest.statusDenuncia());
 
         repository.save(denuncia);
@@ -63,15 +64,23 @@ public class DenunciaService {
         return mapper.toDto(denuncia);
     }
 
-    private Denuncia findById(Long id){
-        return repository.findById(id)
-        .orElseThrow(()-> new EntityNotFoundException("Denuncia não localizada"));
-    }
-
     public Page<DenunciaDtoResponse> getDenunciasPorPeriodo(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-       
-        Page<Denuncia> denuncias = repository.findByDateTimeBetween(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX), pageable);
+
+        Page<Denuncia> denuncias = repository.findByDateTimeBetween(startDate.atStartOfDay(),
+                endDate.atTime(LocalTime.MAX), pageable);
 
         return denuncias.map(mapper::toDto);
+    }
+
+    public Page<DenunciaDtoResponse> getDenunciasPorTipo(TipoDenuncia tipoDenuncia, Pageable pageable) {
+
+        Page<Denuncia> denuncias = repository.findByTipoDenuncia(tipoDenuncia, pageable);
+
+        return denuncias.map(mapper::toDto);
+    }
+
+    private Denuncia findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Denuncia não localizada"));
     }
 }

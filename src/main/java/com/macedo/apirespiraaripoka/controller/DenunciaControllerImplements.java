@@ -22,6 +22,7 @@ import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
+import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
 import jakarta.validation.Valid;
 
@@ -81,6 +82,14 @@ public class DenunciaControllerImplements implements DenunciaInterface {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Pageable pageable) {
         Page<DenunciaDtoResponse> page = service.getDenunciasPorPeriodo(startDate, endDate, pageable);
+        return ResponseEntity.ok().body(page);
+    }
+
+    @GetMapping("/gerenciar/por-tipo")
+    public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorTipo(
+            @RequestParam TipoDenuncia tipoDenuncia,
+            Pageable pageable) {
+        Page<DenunciaDtoResponse> page = service.getDenunciasPorTipo(tipoDenuncia, pageable);
         return ResponseEntity.ok().body(page);
     }
 }
