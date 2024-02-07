@@ -7,6 +7,4 @@ public enum TipoDenuncia {
     DESMATAMENTO_RURAL,
     QUEIMADA_URBANA,
     QUEIMADA_RURAL,
-    POLUICAO_DE_AGUAS
-
 }
