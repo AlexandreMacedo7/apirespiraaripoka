@@ -26,7 +26,7 @@ import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
 import jakarta.validation.Valid;
 
-@RequestMapping("/v1/denuncias")
+@RequestMapping("/v1/denuncia")
 @RestController
 public class DenunciaControllerImplements implements DenunciaInterface {
 
@@ -43,7 +43,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
 
         var denuncia = service.create(dtoRequest);
 
-        URI uri = uriComponentsBuilder.path("/v1/denuncias/{id}").buildAndExpand(denuncia.id()).toUri();
+        URI uri = uriComponentsBuilder.path("/v1/denuncia/{id}").buildAndExpand(denuncia.id()).toUri();
 
         return ResponseEntity.created(uri).body(denuncia);
     }
@@ -55,7 +55,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(denunciaDto);
     }
 
-    @GetMapping("/gerenciar")
+    @GetMapping("/analise")
     @Override
     public ResponseEntity<Page<DenunciaDtoResponse>> getAllDenuncia(Pageable pageable) {
         Page<DenunciaDtoResponse> page = service.getAllDenuncia(pageable);
@@ -69,14 +69,14 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/gerenciar/{id}")
+    @PutMapping("/analise/{id}")
     public ResponseEntity<DenunciaDtoResponse> updateDenuncia(@PathVariable Long id,
             @RequestBody AtualizarStatusDenunciaDtoRequest dtoRequest) {
         var denuncia = service.updateDenuncia(id, dtoRequest);
         return ResponseEntity.ok(denuncia);
     }
 
-    @GetMapping("/gerenciar/por-periodo")
+    @GetMapping("/analise/por-periodo")
     public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorPeriodo(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -85,7 +85,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(page);
     }
 
-    @GetMapping("/gerenciar/por-tipo")
+    @GetMapping("/analise/por-tipo")
     public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorTipo(
             @RequestParam TipoDenuncia tipoDenuncia,
             Pageable pageable) {
@@ -93,7 +93,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(page);
     }
 
-    @GetMapping("/gerenciar/por-periodo-tipo")
+    @GetMapping("/analise/por-periodo-tipo")
     public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorPeriodoTipo(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
