@@ -1,8 +1,6 @@
 package com.macedo.apirespiraaripoka.entity;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
@@ -24,7 +22,7 @@ public class Denuncia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    private ZonedDateTime dateTime;
+    private LocalDateTime dateTime;
     private String endereco;
     private String coordenadasGeograficas;
     @Enumerated(EnumType.STRING)
@@ -33,13 +31,11 @@ public class Denuncia {
     @Enumerated(EnumType.STRING)
     private StatusDenuncia status;
 
-    private static ZoneId manauszZoneId = ZoneId.of("America/Manaus");
-
     public Denuncia() {
     }
 
     public Denuncia(String endereco, String coordenadasGeografica, TipoDenuncia tipoDenuncia, String descricao) {
-        this.dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).atZone(manauszZoneId);
+        this.dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         this.endereco = endereco;
         this.coordenadasGeograficas = coordenadasGeografica;
         this.tipoDenuncia = tipoDenuncia;
@@ -51,7 +47,7 @@ public class Denuncia {
         return this.id;
     }
 
-    public ZonedDateTime getDateTime() {
+    public LocalDateTime getDateTime() {
         return this.dateTime;
     }
 
@@ -75,7 +71,7 @@ public class Denuncia {
         return this.status;
     }
 
-    public void atualizaStatusDenuncia(StatusDenuncia status){
+    public void atualizaStatusDenuncia(StatusDenuncia status) {
         this.status = status;
     }
 }
