@@ -79,8 +79,18 @@ public class DenunciaService {
         return denuncias.map(mapper::toDto);
     }
 
+    public Page<DenunciaDtoResponse> getDenunciasPorPeriodoETipo(LocalDate startDate, LocalDate endDate,
+            TipoDenuncia tipoDenuncia, Pageable pageable) {
+
+        Page<Denuncia> denuncias = repository.findByDateTimeBetweenAndTipoDenuncia(startDate.atStartOfDay(),
+                endDate.atTime(LocalTime.MAX), tipoDenuncia, pageable);
+
+        return denuncias.map(mapper::toDto);
+    }
+
     private Denuncia findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Denuncia não localizada"));
     }
+
 }

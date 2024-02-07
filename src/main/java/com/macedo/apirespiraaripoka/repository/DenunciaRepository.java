@@ -16,4 +16,7 @@ public interface DenunciaRepository extends JpaRepository<Denuncia, Long> {
     Page<Denuncia> findByDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime, Pageable pageable);
 
     Page<Denuncia> findByTipoDenuncia(TipoDenuncia tipoDenuncia, Pageable pageable);
+
+    Page<Denuncia> findByDateTimeBetweenAndTipoDenuncia(LocalDateTime atStartOfDay, LocalDateTime atTime,
+            TipoDenuncia tipoDenuncia, Pageable pageable);
 }

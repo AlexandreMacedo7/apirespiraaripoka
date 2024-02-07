@@ -92,4 +92,14 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         Page<DenunciaDtoResponse> page = service.getDenunciasPorTipo(tipoDenuncia, pageable);
         return ResponseEntity.ok().body(page);
     }
+
+    @GetMapping("/gerenciar/por-periodo-tipo")
+    public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorPeriodoTipo(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam TipoDenuncia tipoDenuncia,
+            Pageable pageable) {
+        Page<DenunciaDtoResponse> page = service.getDenunciasPorPeriodoETipo(startDate, endDate,tipoDenuncia, pageable);
+        return ResponseEntity.ok().body(page);
+    }
 }
