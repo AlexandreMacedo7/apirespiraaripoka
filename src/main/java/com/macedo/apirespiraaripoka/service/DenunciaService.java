@@ -10,6 +10,7 @@ import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -33,7 +34,8 @@ public class DenunciaService {
     }
 
     public DenunciaDtoResponse getDenunciaById(Long id) {
-        var denuncia = repository.findById(id).orElseThrow(() -> new RuntimeException("Denuncia não encontrada!"));
+        var denuncia = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Denuncia não localizada!"));
         return mapper.toDto(denuncia);
     }
 
@@ -41,7 +43,8 @@ public class DenunciaService {
         Page<Denuncia> denuncias = repository.findAll(pageable);
         return denuncias.map(mapper::toDto);
     }
-    public void deleteById(Long id){
+
+    public void deleteById(Long id) {
         repository.deleteById(id);
     }
 }
