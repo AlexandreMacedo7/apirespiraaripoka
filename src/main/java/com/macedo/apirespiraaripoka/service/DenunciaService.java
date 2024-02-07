@@ -1,5 +1,8 @@
 package com.macedo.apirespiraaripoka.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -63,5 +66,12 @@ public class DenunciaService {
     private Denuncia findById(Long id){
         return repository.findById(id)
         .orElseThrow(()-> new EntityNotFoundException("Denuncia não localizada"));
+    }
+
+    public Page<DenunciaDtoResponse> getDenunciasPorPeriodo(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+       
+        Page<Denuncia> denuncias = repository.findByDateTimeBetween(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX), pageable);
+
+        return denuncias.map(mapper::toDto);
     }
 }
