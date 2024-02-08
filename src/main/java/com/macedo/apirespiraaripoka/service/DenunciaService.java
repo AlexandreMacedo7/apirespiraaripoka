@@ -108,6 +108,11 @@ public class DenunciaService {
                 .collect(Collectors.groupingBy(Denuncia::getTipoDenuncia, Collectors.counting()));
     }
 
+    public Map<StatusDenuncia, Long> getTotalDenunciasPorStatus() {
+        return repository.findAll().stream()
+                .collect(Collectors.groupingBy(Denuncia::getStatusDenuncia, Collectors.counting()));
+    }
+
     private Denuncia findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Denuncia não localizada"));
