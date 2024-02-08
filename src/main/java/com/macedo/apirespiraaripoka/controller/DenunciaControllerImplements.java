@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest;
+import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
@@ -50,7 +51,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<DenunciaDtoResponse> getDenunciaById(@PathVariable Long id) {
+    public ResponseEntity<ConsultaDenunciaDtoResponse> getDenunciaById(@PathVariable Long id) {
         var denunciaDto = service.getDenunciaById(id);
         return ResponseEntity.ok().body(denunciaDto);
     }

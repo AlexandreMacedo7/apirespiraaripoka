@@ -12,7 +12,7 @@ public interface DenunciaInterface {
 
     ResponseEntity<DenunciaDtoResponse> create(CriarDenunciaDtoRequest dtoRequest, UriComponentsBuilder uBuilder);
 
-    ResponseEntity<DenunciaDtoResponse> getDenunciaById(Long id);
+    ResponseEntity<?> getDenunciaById(Long id);
 
     ResponseEntity<Page<DenunciaDtoResponse>> getAllDenuncia(Pageable pageable);
 
