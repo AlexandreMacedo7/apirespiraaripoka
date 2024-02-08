@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
 import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest;
+import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
@@ -38,9 +39,9 @@ public class DenunciaService {
         return mapper.toDto(denuncia);
     }
 
-    public DenunciaDtoResponse getDenunciaById(Long id) {
+    public ConsultaDenunciaDtoResponse getDenunciaById(Long id) {
         var denuncia = findById(id);
-        return mapper.toDto(denuncia);
+        return mapper.toDtoConsulta(denuncia);
     }
 
     public Page<DenunciaDtoResponse> getAllDenuncia(Pageable pageable) {
