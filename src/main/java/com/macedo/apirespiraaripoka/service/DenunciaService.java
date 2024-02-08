@@ -2,6 +2,8 @@ package com.macedo.apirespiraaripoka.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,14 +93,19 @@ public class DenunciaService {
     }
 
     public Page<DenunciaDtoResponse> getDenunciaStatus(StatusDenuncia status, Pageable pageable) {
-        
+
         Page<Denuncia> denuncias = repository.findByStatus(status, pageable);
 
         return denuncias.map(mapper::toDto);
     }
 
-    public long getTotalDenuncias(){
+    public long getTotalDenuncias() {
         return repository.count();
+    }
+
+    public Map<TipoDenuncia, Long> getTotalDenunciasPorTipo() {
+        return repository.findAll().stream()
+                .collect(Collectors.groupingBy(Denuncia::getTipoDenuncia, Collectors.counting()));
     }
 
     private Denuncia findById(Long id) {
