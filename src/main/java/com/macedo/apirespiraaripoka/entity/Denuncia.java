@@ -30,6 +30,7 @@ public class Denuncia {
     private String descricao;
     @Enumerated(EnumType.STRING)
     private StatusDenuncia status;
+    private LocalDateTime ultimaAtualizacao;
 
     public Denuncia() {
     }
@@ -71,7 +72,12 @@ public class Denuncia {
         return this.status;
     }
 
+    public LocalDateTime getUltimaAtualizacao(){
+        return this.ultimaAtualizacao;
+    }
+
     public void atualizaStatusDenuncia(StatusDenuncia status) {
         this.status = status;
+        this.ultimaAtualizacao = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 }
