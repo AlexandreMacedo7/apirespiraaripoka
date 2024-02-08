@@ -13,6 +13,7 @@ import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
+import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
 
@@ -89,9 +90,15 @@ public class DenunciaService {
         return denuncias.map(mapper::toDto);
     }
 
+    public Page<DenunciaDtoResponse> getDenunciaStatus(StatusDenuncia status, Pageable pageable) {
+        
+        Page<Denuncia> denuncias = repository.findByStatus(status, pageable);
+
+        return denuncias.map(mapper::toDto);
+    }
+
     private Denuncia findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Denuncia não localizada"));
     }
-
 }
