@@ -20,10 +20,18 @@ public class EstatisticaDenunciaService {
 
         EstatisticaDenunciaDtoResponse dtoResponse = new EstatisticaDenunciaDtoResponse(
                 denunciaService.getTotalDenuncias(),
-                denunciaService.getTotalDenunciasPorTipo().entrySet().stream().collect(Collectors.toMap(
-                        e -> e.getKey().name(), Map.Entry::getValue)),
-                denunciaService.getTotalDenunciasPorStatus().entrySet().stream()
-                        .collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue)));
+                denunciaService.getTotalDenunciasPorTipo()
+                        .entrySet()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                e -> e.getKey().name(),
+                                Map.Entry::getValue)),
+                denunciaService.getTotalDenunciasPorStatus()
+                        .entrySet()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                e -> e.getKey().name(),
+                                Map.Entry::getValue)));
 
         return dtoResponse;
     }
