@@ -3,6 +3,7 @@ package com.macedo.apirespiraaripoka.util.mapper;
 import org.springframework.stereotype.Component;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
+import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
 
@@ -28,6 +29,15 @@ public class DenunciaMapper {
                 denuncia.getTipoDenuncia(),
                 denuncia.getDescricao(),
                 denuncia.getStatusDenuncia());
+        return dtoResponse;
+    }
+
+    public ConsultaDenunciaDtoResponse toDtoConsulta(Denuncia denuncia) {
+        ConsultaDenunciaDtoResponse dtoResponse = new ConsultaDenunciaDtoResponse(
+                denuncia.getId(),
+                denuncia.getDateTime(),
+                denuncia.getStatusDenuncia(),
+                denuncia.getUltimaAtualizacao());
         return dtoResponse;
     }
 }
