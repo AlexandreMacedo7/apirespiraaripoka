@@ -97,6 +97,10 @@ public class DenunciaService {
         return denuncias.map(mapper::toDto);
     }
 
+    public long getTotalDenuncias(){
+        return repository.count();
+    }
+
     private Denuncia findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Denuncia não localizada"));
