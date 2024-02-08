@@ -22,7 +22,9 @@ import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest
 import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
+import com.macedo.apirespiraaripoka.entity.dto.EstatisticaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
+import com.macedo.apirespiraaripoka.service.EstatisticaDenunciaService;
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
@@ -33,9 +35,11 @@ import jakarta.validation.Valid;
 public class DenunciaControllerImplements implements DenunciaInterface {
 
     private final DenunciaService service;
+    private final EstatisticaDenunciaService estatisticaDenunciaService;
 
-    public DenunciaControllerImplements(DenunciaService service) {
+    public DenunciaControllerImplements(DenunciaService service, EstatisticaDenunciaService estatisticaService) {
         this.service = service;
+        this.estatisticaDenunciaService = estatisticaService;
     }
 
     @PostMapping
@@ -111,6 +115,12 @@ public class DenunciaControllerImplements implements DenunciaInterface {
             Pageable pageable) {
         Page<DenunciaDtoResponse> page = service.getDenunciaStatus(status, pageable);
         return ResponseEntity.ok().body(page);
+    }
+
+    @GetMapping("analise/estatisticas")
+    public ResponseEntity<EstatisticaDenunciaDtoResponse> getEstatisticasDenuncias() {
+        EstatisticaDenunciaDtoResponse estatisticas = estatisticaDenunciaService.calcularEstatisticasDenuncias();
+        return ResponseEntity.ok(estatisticas);
     }
 
 }
