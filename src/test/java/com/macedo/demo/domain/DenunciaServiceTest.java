@@ -7,13 +7,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
 import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
@@ -102,6 +109,28 @@ public class DenunciaServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> denunciaService.getDenunciaById(id)).isInstanceOf(RuntimeException.class);
     }
+    
+    @Test
+    public void getAllDenuncia_DeveRetornarPaginaDeDtoResponse() {
+        // Arrange
+        Pageable pageable = PageRequest.of(0, 20);
+        List<Denuncia> denuncias = criarDenuncias();
+        Page<Denuncia> paginaDenuncias = new PageImpl<>(denuncias, pageable,
+                denuncias.size());
+
+        when(denunciaRepository.findAll(pageable)).thenReturn(paginaDenuncias);
+
+        List<DenunciaDtoResponse> dtoResponsesSimulados = denuncias.stream()
+                .map(denunciaMapper::toDto)
+                .collect(Collectors.toList());
+
+        // Act
+        Page<DenunciaDtoResponse> resultado = denunciaService.getAllDenuncia(pageable);
+
+        // Assert
+        assertEquals(dtoResponsesSimulados.size(), resultado.getContent().size()); 
+        assertEquals(dtoResponsesSimulados, resultado.getContent());
+    }
 
     private ConsultaDenunciaDtoResponse criaConsultaDenunciaDtoResponse() {
         return new ConsultaDenunciaDtoResponse(1L, LocalDateTime.now().MIN, StatusDenuncia.RECEBIDA,
@@ -110,6 +139,19 @@ public class DenunciaServiceTest {
 
     private Denuncia criarDenuncia() {
         return new Denuncia("Endereço", "Coordenadas", TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO, "Descrição");
+    }
+
+    private List<Denuncia> criarDenuncias() {
+        List<Denuncia> denunciasList = new ArrayList();
+
+        Denuncia denuncia1 = new Denuncia("Endereço 1", "Coordenadas", TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO,
+                "Descrição");
+        Denuncia denuncia2 = new Denuncia("Endereço 2", "Coordenadas", TipoDenuncia.QUEIMADA_URBANA, "Descrição");
+
+        denunciasList.add(denuncia1);
+        denunciasList.add(denuncia2);
+
+        return denunciasList;
     }
 
     private CriarDenunciaDtoRequest criarCriarDenunciaDtoRequest() {
