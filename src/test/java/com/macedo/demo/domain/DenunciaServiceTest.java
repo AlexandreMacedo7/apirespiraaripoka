@@ -1,6 +1,7 @@
 package com.macedo.demo.domain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cglib.core.Local;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
@@ -21,8 +21,6 @@ import com.macedo.apirespiraaripoka.service.DenunciaService;
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
-
-import ch.qos.logback.core.status.Status;
 
 @ExtendWith(MockitoExtension.class)
 public class DenunciaServiceTest {
@@ -50,11 +48,25 @@ public class DenunciaServiceTest {
 
         when(denunciaMapper.toDto(denunciaSalva)).thenReturn(dtoResponse);
 
-        //Act
+        // Act
         DenunciaDtoResponse atualDtoResponse = denunciaService.create(dtoRequest);
 
-        //Assert
-        assertEquals(dtoResponse, atualDtoResponse);
+        // Assert
+        assertThat(dtoResponse).isEqualTo(atualDtoResponse);
+    }
+
+    @Test
+    public void criaDenuncia_ComDadosInvalidos_RetornaExcecao() {
+
+        // Arrange
+
+        CriarDenunciaDtoRequest dtoInvalidoRequest = criarCriarDenunciaDtoInvalidoRequest();
+
+        when(denunciaMapper.toEntity(dtoInvalidoRequest)).thenThrow(RuntimeException.class);
+
+        // Act & Assert
+
+        assertThatThrownBy(() -> denunciaService.create(dtoInvalidoRequest)).isInstanceOf(RuntimeException.class);
     }
 
     private Denuncia criarDenuncia() {
@@ -64,6 +76,11 @@ public class DenunciaServiceTest {
     private CriarDenunciaDtoRequest criarCriarDenunciaDtoRequest() {
         return new CriarDenunciaDtoRequest("Endereço Valido", "Cordenadas Validas",
                 TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO, "Descrição Válida");
+    }
+
+    private CriarDenunciaDtoRequest criarCriarDenunciaDtoInvalidoRequest() {
+        return new CriarDenunciaDtoRequest("", "",
+                TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO, "");
     }
 
     private DenunciaDtoResponse criarDenunciaDtoResponse() {
