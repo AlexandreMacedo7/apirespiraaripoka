@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
+import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
@@ -132,6 +133,34 @@ public class DenunciaServiceTest {
         assertEquals(dtoResponsesSimulados, resultado.getContent());
     }
 
+    @Test
+    public void updateDenuncia_DeveAtualizarStatusDenuncia_RetornarDtoResponse(){
+        //Arrange
+       
+        StatusDenuncia novoStatus = StatusDenuncia.ANALISANDO;
+        AtualizarStatusDenunciaDtoRequest dtoRequest = new AtualizarStatusDenunciaDtoRequest(novoStatus);
+
+        Denuncia denunciaExistente = criarDenuncia();
+        Long id = denunciaExistente.getId();
+        Denuncia denunciaAtualizada = denunciaExistente;
+        denunciaAtualizada.atualizaStatusDenuncia(novoStatus);
+
+        DenunciaDtoResponse dtoResponseSimulado = criarDenunciaDtoResponseComDenunciaAtualizada(denunciaAtualizada);
+        
+        when(denunciaRepository.findById(id)).thenReturn(Optional.of(denunciaExistente));
+        when(denunciaRepository.save(any(Denuncia.class))).thenReturn(denunciaAtualizada);
+        when(denunciaMapper.toDto(denunciaAtualizada)).thenReturn(dtoResponseSimulado);
+
+        // Act
+        DenunciaDtoResponse resultadoDto = denunciaService.updateDenuncia(id, dtoRequest);
+
+        // Assert
+        assertEquals(dtoResponseSimulado, resultadoDto);
+        assertEquals(novoStatus, denunciaExistente.getStatusDenuncia()); // Verifica se o status foi atualizado corretamente
+
+    }
+
+
     private ConsultaDenunciaDtoResponse criaConsultaDenunciaDtoResponse() {
         return new ConsultaDenunciaDtoResponse(1L, LocalDateTime.now().MIN, StatusDenuncia.RECEBIDA,
                 LocalDateTime.now());
@@ -152,6 +181,13 @@ public class DenunciaServiceTest {
         denunciasList.add(denuncia2);
 
         return denunciasList;
+    }
+
+
+    private DenunciaDtoResponse criarDenunciaDtoResponseComDenunciaAtualizada(Denuncia denunciaAtualizada) {
+       return new DenunciaDtoResponse(denunciaAtualizada.getId(), denunciaAtualizada.getDateTime(),
+       denunciaAtualizada.getEndereco(),denunciaAtualizada.getCoordenadasGeograficas(), denunciaAtualizada.getTipoDenuncia(),
+        denunciaAtualizada.getDescricao(), denunciaAtualizada.getStatusDenuncia());
     }
 
     private CriarDenunciaDtoRequest criarCriarDenunciaDtoRequest() {
