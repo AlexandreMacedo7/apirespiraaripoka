@@ -68,7 +68,7 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(page);
     }
 
-    @DeleteMapping("/gerenciar/{id}")
+    @DeleteMapping("/analise/{id}")
     @Override
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         service.deleteById(id);
