@@ -1,5 +1,6 @@
 package com.macedo.demo.domain;
 
+import static com.macedo.demo.domain.builders.DenunciaBuilder.umaDenuncia;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.denunciaDtoRequestValido;
+
+import static com.macedo.demo.domain.builders.DenunciaDTOResponseBuilder.denunciaDetalhadaDtoResponse;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,9 +30,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
 import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest;
-import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
+import com.macedo.apirespiraaripoka.entity.dto.ConsultaStatusDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
-import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
+import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
@@ -46,24 +52,25 @@ public class DenunciaServiceTest {
     private DenunciaMapper denunciaMapper;
 
     @Test
+    @DisplayName("Deve criar uma denuncia válida")
     public void criaDenuncia_ComDadosValidos_RetornaDto() {
 
         // Arrange
-        CriarDenunciaDtoRequest dtoRequest = criarCriarDenunciaDtoRequest();
-        Denuncia denunciaSalva = criarDenuncia();
-        DenunciaDtoResponse dtoResponseSimulado = criarDenunciaDtoResponse();
+        CriarDenunciaDtoRequest dtoRequest = denunciaDtoRequestValido();
+        Denuncia denuncia = umaDenuncia().umaDenunciaPadrao().build();
+        DenunciaDetalhadaDtoResponse dtoResponse = denunciaDetalhadaDtoResponse();
 
-        when(denunciaMapper.toEntity(dtoRequest)).thenReturn(denunciaSalva);
+        when(denunciaMapper.toEntity(dtoRequest)).thenReturn(denuncia);
 
-        when(denunciaRepository.save(any(Denuncia.class))).thenReturn(denunciaSalva);
+        when(denunciaRepository.save(any(Denuncia.class))).thenReturn(denuncia);
 
-        when(denunciaMapper.toDto(denunciaSalva)).thenReturn(dtoResponseSimulado);
+        when(denunciaMapper.toDto(denuncia)).thenReturn(dtoResponse);
 
         // Act
-        DenunciaDtoResponse dtoResponseReal = denunciaService.create(dtoRequest);
+        DenunciaDetalhadaDtoResponse dtoResponseReal = denunciaService.create(dtoRequest);
 
         // Assert
-        assertThat(dtoResponseSimulado).isEqualTo(dtoResponseReal);
+        assertThat(dtoResponse).isEqualTo(dtoResponseReal);
     }
 
     @Test
@@ -86,13 +93,13 @@ public class DenunciaServiceTest {
         // Arrange
         Long id = 1L;
         Denuncia denuncia = criarDenuncia();
-        ConsultaDenunciaDtoResponse dtoResponseSimulado = criaConsultaDenunciaDtoResponse();
+        ConsultaStatusDenunciaDtoResponse dtoResponseSimulado = criaConsultaDenunciaDtoResponse();
 
         when(denunciaRepository.findById(1l)).thenReturn(Optional.of(denuncia));
         when(denunciaMapper.toDtoConsulta(denuncia)).thenReturn(dtoResponseSimulado);
 
         // Act
-        ConsultaDenunciaDtoResponse dtoResponseReal = denunciaService.getDenunciaById(id);
+        ConsultaStatusDenunciaDtoResponse dtoResponseReal = denunciaService.getDenunciaById(id);
 
         // Assert
 
@@ -121,12 +128,12 @@ public class DenunciaServiceTest {
 
         when(denunciaRepository.findAll(pageable)).thenReturn(paginaDenuncias);
 
-        List<DenunciaDtoResponse> dtoResponsesSimulados = denuncias.stream()
+        List<DenunciaDetalhadaDtoResponse> dtoResponsesSimulados = denuncias.stream()
                 .map(denunciaMapper::toDto)
                 .collect(Collectors.toList());
 
         // Act
-        Page<DenunciaDtoResponse> resultado = denunciaService.getAllDenuncia(pageable);
+        Page<DenunciaDetalhadaDtoResponse> resultado = denunciaService.getAllDenuncia(pageable);
 
         // Assert
         assertEquals(dtoResponsesSimulados.size(), resultado.getContent().size()); 
@@ -145,14 +152,14 @@ public class DenunciaServiceTest {
         Denuncia denunciaAtualizada = denunciaExistente;
         denunciaAtualizada.atualizaStatusDenuncia(novoStatus);
 
-        DenunciaDtoResponse dtoResponseSimulado = criarDenunciaDtoResponseComDenunciaAtualizada(denunciaAtualizada);
+        DenunciaDetalhadaDtoResponse dtoResponseSimulado = criarDenunciaDtoResponseComDenunciaAtualizada(denunciaAtualizada);
         
         when(denunciaRepository.findById(id)).thenReturn(Optional.of(denunciaExistente));
         when(denunciaRepository.save(any(Denuncia.class))).thenReturn(denunciaAtualizada);
         when(denunciaMapper.toDto(denunciaAtualizada)).thenReturn(dtoResponseSimulado);
 
         // Act
-        DenunciaDtoResponse resultadoDto = denunciaService.updateDenuncia(id, dtoRequest);
+        DenunciaDetalhadaDtoResponse resultadoDto = denunciaService.updateDenuncia(id, dtoRequest);
 
         // Assert
         assertEquals(dtoResponseSimulado, resultadoDto);
@@ -161,8 +168,8 @@ public class DenunciaServiceTest {
     }
 
 
-    private ConsultaDenunciaDtoResponse criaConsultaDenunciaDtoResponse() {
-        return new ConsultaDenunciaDtoResponse(1L, LocalDateTime.now().MIN, StatusDenuncia.RECEBIDA,
+    private ConsultaStatusDenunciaDtoResponse criaConsultaDenunciaDtoResponse() {
+        return new ConsultaStatusDenunciaDtoResponse(1L, LocalDateTime.now().MIN, StatusDenuncia.RECEBIDA,
                 LocalDateTime.now());
     }
 
@@ -183,26 +190,15 @@ public class DenunciaServiceTest {
         return denunciasList;
     }
 
-
-    private DenunciaDtoResponse criarDenunciaDtoResponseComDenunciaAtualizada(Denuncia denunciaAtualizada) {
-       return new DenunciaDtoResponse(denunciaAtualizada.getId(), denunciaAtualizada.getDateTime(),
+    private DenunciaDetalhadaDtoResponse criarDenunciaDtoResponseComDenunciaAtualizada(Denuncia denunciaAtualizada) {
+       return new DenunciaDetalhadaDtoResponse(denunciaAtualizada.getId(), denunciaAtualizada.getDateTime(),
        denunciaAtualizada.getEndereco(),denunciaAtualizada.getCoordenadasGeograficas(), denunciaAtualizada.getTipoDenuncia(),
         denunciaAtualizada.getDescricao(), denunciaAtualizada.getStatusDenuncia());
-    }
-
-    private CriarDenunciaDtoRequest criarCriarDenunciaDtoRequest() {
-        return new CriarDenunciaDtoRequest("Endereço Valido", "Cordenadas Validas",
-                TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO, "Descrição Válida");
     }
 
     private CriarDenunciaDtoRequest criarCriarDenunciaDtoInvalidoRequest() {
         return new CriarDenunciaDtoRequest("", "",
                 TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO, "");
-    }
-
-    private DenunciaDtoResponse criarDenunciaDtoResponse() {
-        return new DenunciaDtoResponse(1l, LocalDateTime.now(), "Endereço", "Coordenadas",
-                TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO, "Descrição", StatusDenuncia.RECEBIDA);
     }
 
 }
