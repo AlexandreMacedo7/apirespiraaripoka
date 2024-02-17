@@ -7,7 +7,6 @@ import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
-import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,10 +27,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.macedo.demo.domain.builders.DenunciaBuilder.umaDenuncia;
-import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.denunciaDtoRequestInvalido;
-import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.denunciaDtoRequestValido;
-import static com.macedo.demo.domain.builders.DenunciaDTOResponseBuilder.consultaStatusDenunciaDtoResponse;
-import static com.macedo.demo.domain.builders.DenunciaDTOResponseBuilder.denunciaDetalhadaDtoResponse;
+import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.*;
+import static com.macedo.demo.domain.builders.DenunciaDTOResponseBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -144,36 +141,32 @@ public class DenunciaServiceTest {
     }
 
     @Test
+    @DisplayName("Deve atualizar uma denuncia existente")
     public void updateDenuncia_DeveAtualizarStatusDenuncia_RetornarDtoResponse() {
         //Arrange
 
-        StatusDenuncia novoStatus = StatusDenuncia.ANALISANDO;
-        AtualizarStatusDenunciaDtoRequest dtoRequest = new AtualizarStatusDenunciaDtoRequest(novoStatus);
+        AtualizarStatusDenunciaDtoRequest dtoRequest = novoStatusDenunciaDtoRequest();
 
-        Denuncia denunciaExistente = criarDenuncia();
-        Long id = denunciaExistente.getId();
-        Denuncia denunciaAtualizada = denunciaExistente;
-        denunciaAtualizada.atualizaStatusDenuncia(novoStatus);
+        Denuncia denuncia = umaDenuncia().umaDenunciaPadrao().build();
+        Long id = denuncia.getId();
 
-        DenunciaDetalhadaDtoResponse dtoResponseSimulado = criarDenunciaDtoResponseComDenunciaAtualizada(denunciaAtualizada);
+        denuncia.atualizaStatusDenuncia(dtoRequest.statusDenuncia());
 
-        when(denunciaRepository.findById(id)).thenReturn(Optional.of(denunciaExistente));
-        when(denunciaRepository.save(any(Denuncia.class))).thenReturn(denunciaAtualizada);
-        when(denunciaMapper.toDto(denunciaAtualizada)).thenReturn(dtoResponseSimulado);
+        DenunciaDetalhadaDtoResponse dtoResponse = denunciaDtoResponseComDenunciaAtualizada(denuncia);
+
+        when(denunciaRepository.findById(id)).thenReturn(Optional.of(denuncia));
+        when(denunciaRepository.save(any(Denuncia.class))).thenReturn(denuncia);
+        when(denunciaMapper.toDto(denuncia)).thenReturn(dtoResponse);
 
         // Act
-        DenunciaDetalhadaDtoResponse resultadoDto = denunciaService.updateDenuncia(id, dtoRequest);
+        DenunciaDetalhadaDtoResponse dtoResponseReal = denunciaService.updateDenuncia(id, dtoRequest);
 
         // Assert
-        assertEquals(dtoResponseSimulado, resultadoDto);
-        assertEquals(novoStatus, denunciaExistente.getStatusDenuncia()); // Verifica se o status foi atualizado corretamente
+        assertEquals(dtoResponse, dtoResponseReal); // O DTO de resposta deve corresponder ao esperado após a atualização;
+        assertEquals(dtoRequest.statusDenuncia(), denuncia.getStatusDenuncia()); //O status da denúncia deve ser atualizado corretamente;
 
     }
 
-
-    private Denuncia criarDenuncia() {
-        return new Denuncia("Endereço", "Coordenadas", TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO, "Descrição");
-    }
 
     private List<Denuncia> criarDenuncias() {
         List<Denuncia> denunciasList = new ArrayList();
@@ -187,11 +180,4 @@ public class DenunciaServiceTest {
 
         return denunciasList;
     }
-
-    private DenunciaDetalhadaDtoResponse criarDenunciaDtoResponseComDenunciaAtualizada(Denuncia denunciaAtualizada) {
-        return new DenunciaDetalhadaDtoResponse(denunciaAtualizada.getId(), denunciaAtualizada.getDateTime(),
-                denunciaAtualizada.getEndereco(), denunciaAtualizada.getCoordenadasGeograficas(), denunciaAtualizada.getTipoDenuncia(),
-                denunciaAtualizada.getDescricao(), denunciaAtualizada.getStatusDenuncia());
-    }
-
 }
