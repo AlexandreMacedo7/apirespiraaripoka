@@ -10,6 +10,7 @@ import com.macedo.apirespiraaripoka.service.DenunciaService;
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -109,6 +110,7 @@ public class DenunciaServiceTest {
     }
 
     @Test
+    @DisplayName("Deve lançar uma exceção EntityNotFoundException em caso de Id inválido")
     public void getDenunciaId_Inexistente_RetornaExcecao() {
 
         // Arrange
@@ -116,7 +118,7 @@ public class DenunciaServiceTest {
         when(denunciaRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThatThrownBy(() -> denunciaService.getDenunciaById(id)).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> denunciaService.getDenunciaById(id)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
