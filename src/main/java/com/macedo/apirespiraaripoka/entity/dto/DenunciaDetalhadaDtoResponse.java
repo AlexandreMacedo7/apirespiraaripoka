@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
-public record DenunciaDtoResponse(
+public record DenunciaDetalhadaDtoResponse(
 
         Long id,
         LocalDateTime dataDenuncia,
