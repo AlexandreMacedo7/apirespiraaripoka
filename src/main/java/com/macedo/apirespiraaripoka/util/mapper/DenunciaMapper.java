@@ -3,9 +3,9 @@ package com.macedo.apirespiraaripoka.util.mapper;
 import org.springframework.stereotype.Component;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
-import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
+import com.macedo.apirespiraaripoka.entity.dto.ConsultaStatusDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
-import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
+import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 
 @Component
 public class DenunciaMapper {
@@ -21,8 +21,8 @@ public class DenunciaMapper {
         return denuncia;
     }
 
-    public DenunciaDtoResponse toDto(Denuncia denuncia) {
-        DenunciaDtoResponse dtoResponse = new DenunciaDtoResponse(denuncia.getId(),
+    public DenunciaDetalhadaDtoResponse toDto(Denuncia denuncia) {
+        DenunciaDetalhadaDtoResponse dtoResponse = new DenunciaDetalhadaDtoResponse(denuncia.getId(),
                 denuncia.getDateTime(),
                 denuncia.getEndereco(),
                 denuncia.getCoordenadasGeograficas(),
@@ -32,8 +32,8 @@ public class DenunciaMapper {
         return dtoResponse;
     }
 
-    public ConsultaDenunciaDtoResponse toDtoConsulta(Denuncia denuncia) {
-        ConsultaDenunciaDtoResponse dtoResponse = new ConsultaDenunciaDtoResponse(
+    public ConsultaStatusDenunciaDtoResponse toDtoConsulta(Denuncia denuncia) {
+        ConsultaStatusDenunciaDtoResponse dtoResponse = new ConsultaStatusDenunciaDtoResponse(
                 denuncia.getId(),
                 denuncia.getDateTime(),
                 denuncia.getStatusDenuncia(),
