@@ -33,6 +33,7 @@ public class DenunciaBuilder {
     }
 
     private static void inicializaDadosPadroes(DenunciaBuilder builder) {
+        builder.comIdPadrao();
         builder.comDataDenunciaPadrao();
         builder.comEnderecoPadrao();
         builder.comCoordenadasGeograficasPadrao();
