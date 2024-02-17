@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest;
-import com.macedo.apirespiraaripoka.entity.dto.ConsultaDenunciaDtoResponse;
+import com.macedo.apirespiraaripoka.entity.dto.ConsultaStatusDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
-import com.macedo.apirespiraaripoka.entity.dto.DenunciaDtoResponse;
+import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 import com.macedo.apirespiraaripoka.entity.dto.EstatisticaDenunciaDtoResponse;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
 import com.macedo.apirespiraaripoka.service.EstatisticaDenunciaService;
@@ -44,8 +44,8 @@ public class DenunciaControllerImplements implements DenunciaInterface {
 
     @PostMapping
     @Override
-    public ResponseEntity<DenunciaDtoResponse> create(@RequestBody @Valid CriarDenunciaDtoRequest dtoRequest,
-            UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<DenunciaDetalhadaDtoResponse> create(@RequestBody @Valid CriarDenunciaDtoRequest dtoRequest,
+                                                               UriComponentsBuilder uriComponentsBuilder) {
 
         var denuncia = service.create(dtoRequest);
 
@@ -56,15 +56,15 @@ public class DenunciaControllerImplements implements DenunciaInterface {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<ConsultaDenunciaDtoResponse> getDenunciaById(@PathVariable Long id) {
+    public ResponseEntity<ConsultaStatusDenunciaDtoResponse> getDenunciaById(@PathVariable Long id) {
         var denunciaDto = service.getDenunciaById(id);
         return ResponseEntity.ok().body(denunciaDto);
     }
 
     @GetMapping("/analise")
     @Override
-    public ResponseEntity<Page<DenunciaDtoResponse>> getAllDenuncia(Pageable pageable) {
-        Page<DenunciaDtoResponse> page = service.getAllDenuncia(pageable);
+    public ResponseEntity<Page<DenunciaDetalhadaDtoResponse>> getAllDenuncia(Pageable pageable) {
+        Page<DenunciaDetalhadaDtoResponse> page = service.getAllDenuncia(pageable);
         return ResponseEntity.ok().body(page);
     }
 
@@ -76,44 +76,44 @@ public class DenunciaControllerImplements implements DenunciaInterface {
     }
 
     @PutMapping("/analise/{id}")
-    public ResponseEntity<DenunciaDtoResponse> updateDenuncia(@PathVariable Long id,
-            @RequestBody AtualizarStatusDenunciaDtoRequest dtoRequest) {
+    public ResponseEntity<DenunciaDetalhadaDtoResponse> updateDenuncia(@PathVariable Long id,
+                                                                       @RequestBody AtualizarStatusDenunciaDtoRequest dtoRequest) {
         var denuncia = service.updateDenuncia(id, dtoRequest);
         return ResponseEntity.ok(denuncia);
     }
 
     @GetMapping("/analise/por-periodo")
-    public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorPeriodo(
+    public ResponseEntity<Page<DenunciaDetalhadaDtoResponse>> getDenunciasPorPeriodo(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Pageable pageable) {
-        Page<DenunciaDtoResponse> page = service.getDenunciasPorPeriodo(startDate, endDate, pageable);
+        Page<DenunciaDetalhadaDtoResponse> page = service.getDenunciasPorPeriodo(startDate, endDate, pageable);
         return ResponseEntity.ok().body(page);
     }
 
     @GetMapping("/analise/por-tipo")
-    public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorTipo(
+    public ResponseEntity<Page<DenunciaDetalhadaDtoResponse>> getDenunciasPorTipo(
             @RequestParam TipoDenuncia tipoDenuncia,
             Pageable pageable) {
-        Page<DenunciaDtoResponse> page = service.getDenunciasPorTipo(tipoDenuncia, pageable);
+        Page<DenunciaDetalhadaDtoResponse> page = service.getDenunciasPorTipo(tipoDenuncia, pageable);
         return ResponseEntity.ok().body(page);
     }
 
     @GetMapping("/analise/por-periodo-tipo")
-    public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciasPorPeriodoTipo(
+    public ResponseEntity<Page<DenunciaDetalhadaDtoResponse>> getDenunciasPorPeriodoTipo(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam TipoDenuncia tipoDenuncia,
             Pageable pageable) {
-        Page<DenunciaDtoResponse> page = service.getDenunciasPorPeriodoETipo(startDate, endDate, tipoDenuncia,
+        Page<DenunciaDetalhadaDtoResponse> page = service.getDenunciasPorPeriodoETipo(startDate, endDate, tipoDenuncia,
                 pageable);
         return ResponseEntity.ok().body(page);
     }
 
     @GetMapping("/analise/por-status")
-    public ResponseEntity<Page<DenunciaDtoResponse>> getDenunciaPorStatus(@RequestParam StatusDenuncia status,
-            Pageable pageable) {
-        Page<DenunciaDtoResponse> page = service.getDenunciaStatus(status, pageable);
+    public ResponseEntity<Page<DenunciaDetalhadaDtoResponse>> getDenunciaPorStatus(@RequestParam StatusDenuncia status,
+                                                                                   Pageable pageable) {
+        Page<DenunciaDetalhadaDtoResponse> page = service.getDenunciaStatus(status, pageable);
         return ResponseEntity.ok().body(page);
     }
 
