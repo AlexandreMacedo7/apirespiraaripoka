@@ -48,7 +48,7 @@ public class Denuncia {
         return this.id;
     }
 
-    public LocalDateTime getDateTime() {
+    public LocalDateTime getDataDenuncia() {
         return this.dataDenuncia;
     }
 
