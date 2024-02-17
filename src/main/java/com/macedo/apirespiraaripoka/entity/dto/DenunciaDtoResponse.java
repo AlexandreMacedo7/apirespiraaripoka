@@ -8,7 +8,7 @@ import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 public record DenunciaDtoResponse(
 
         Long id,
-        LocalDateTime dateTime,
+        LocalDateTime dataDenuncia,
         String endereco,
         String coordenadasGeografica,
         TipoDenuncia tipoDenuncia,

@@ -22,7 +22,7 @@ public class Denuncia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime dataDenuncia;
     private String endereco;
     private String coordenadasGeograficas;
     @Enumerated(EnumType.STRING)
@@ -36,7 +36,7 @@ public class Denuncia {
     }
 
     public Denuncia(String endereco, String coordenadasGeografica, TipoDenuncia tipoDenuncia, String descricao) {
-        this.dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        this.dataDenuncia = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         this.endereco = endereco;
         this.coordenadasGeograficas = coordenadasGeografica;
         this.tipoDenuncia = tipoDenuncia;
@@ -49,7 +49,7 @@ public class Denuncia {
     }
 
     public LocalDateTime getDateTime() {
-        return this.dateTime;
+        return this.dataDenuncia;
     }
 
     public String getEndereco() {

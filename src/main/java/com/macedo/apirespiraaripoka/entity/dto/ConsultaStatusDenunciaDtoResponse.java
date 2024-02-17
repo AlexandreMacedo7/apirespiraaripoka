@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 
-public record ConsultaDenunciaDtoResponse(
+public record ConsultaStatusDenunciaDtoResponse(
 
                 Long id,
-                LocalDateTime dateTime,
+                LocalDateTime dataDenuncia,
                 StatusDenuncia status,
                 LocalDateTime ultimaAtualizacao) {
 
