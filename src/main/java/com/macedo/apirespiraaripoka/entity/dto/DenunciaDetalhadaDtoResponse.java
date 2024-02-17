@@ -13,6 +13,8 @@ public record DenunciaDetalhadaDtoResponse(
         String coordenadasGeografica,
         TipoDenuncia tipoDenuncia,
         String descricao,
-        StatusDenuncia status) {
+        StatusDenuncia status,
+        LocalDateTime utltimaAtualizacao
+) {
 
 }

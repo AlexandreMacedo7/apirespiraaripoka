@@ -23,19 +23,20 @@ public class DenunciaMapper {
 
     public DenunciaDetalhadaDtoResponse toDto(Denuncia denuncia) {
         DenunciaDetalhadaDtoResponse dtoResponse = new DenunciaDetalhadaDtoResponse(denuncia.getId(),
-                denuncia.getDateTime(),
+                denuncia.getDataDenuncia(),
                 denuncia.getEndereco(),
                 denuncia.getCoordenadasGeograficas(),
                 denuncia.getTipoDenuncia(),
                 denuncia.getDescricao(),
-                denuncia.getStatusDenuncia());
+                denuncia.getStatusDenuncia(),
+                denuncia.getUltimaAtualizacao());
         return dtoResponse;
     }
 
     public ConsultaStatusDenunciaDtoResponse toDtoConsulta(Denuncia denuncia) {
         ConsultaStatusDenunciaDtoResponse dtoResponse = new ConsultaStatusDenunciaDtoResponse(
                 denuncia.getId(),
-                denuncia.getDateTime(),
+                denuncia.getDataDenuncia(),
                 denuncia.getStatusDenuncia(),
                 denuncia.getUltimaAtualizacao());
         return dtoResponse;

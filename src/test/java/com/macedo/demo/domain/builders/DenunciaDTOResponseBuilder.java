@@ -1,12 +1,11 @@
 package com.macedo.demo.domain.builders;
 
+import com.macedo.apirespiraaripoka.entity.Denuncia;
 import com.macedo.apirespiraaripoka.entity.dto.ConsultaStatusDenunciaDtoResponse;
-import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class DenunciaDTOResponseBuilder {
@@ -19,7 +18,8 @@ public class DenunciaDTOResponseBuilder {
                 "Coordenadas",
                 TipoDenuncia.DESMATAMENTO_URBANO,
                 "Descrição válida",
-                StatusDenuncia.RECEBIDA
+                StatusDenuncia.RECEBIDA,
+                null
         );
     }
 
@@ -30,5 +30,11 @@ public class DenunciaDTOResponseBuilder {
                 StatusDenuncia.RECEBIDA,
                 null
         );
+    }
+
+    public static DenunciaDetalhadaDtoResponse denunciaDtoResponseComDenunciaAtualizada(Denuncia denunciaAtualizada) {
+        return new DenunciaDetalhadaDtoResponse(denunciaAtualizada.getId(), denunciaAtualizada.getDataDenuncia(),
+                denunciaAtualizada.getEndereco(), denunciaAtualizada.getCoordenadasGeograficas(), denunciaAtualizada.getTipoDenuncia(),
+                denunciaAtualizada.getDescricao(), denunciaAtualizada.getStatusDenuncia(), denunciaAtualizada.getUltimaAtualizacao());
     }
 }
