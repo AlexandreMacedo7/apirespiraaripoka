@@ -118,6 +118,7 @@ public class DenunciaServiceTest {
         assertThatThrownBy(() -> denunciaService.getDenunciaById(id)).isInstanceOf(EntityNotFoundException.class);
     }
 
+    //Necessica melhora
     @Test
     public void getAllDenuncia_DeveRetornarPaginaDeDtoResponse() {
         // Arrange
