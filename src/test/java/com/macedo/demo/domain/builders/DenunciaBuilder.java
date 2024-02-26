@@ -5,6 +5,8 @@ import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 public class DenunciaBuilder {
 
@@ -99,5 +101,12 @@ public class DenunciaBuilder {
     public DenunciaBuilder comDescricaoVazio(){
         this.descricao = "";
         return this;
+    }
+
+    public static List<Denuncia> criarDenunciasPadrao(){
+        return Arrays.asList(
+                umaDenunciaPadrao().build(),
+                umaDenunciaPadrao().build()
+        );
     }
 }
