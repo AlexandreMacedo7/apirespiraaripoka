@@ -7,8 +7,8 @@ import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
-import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
+import com.macedo.demo.domain.util.TesteUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,15 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.macedo.demo.domain.builders.DenunciaBuilder.criarDenunciasPadrao;
 import static com.macedo.demo.domain.builders.DenunciaBuilder.umaDenuncia;
 import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.*;
 import static com.macedo.demo.domain.builders.DenunciaDTOResponseBuilder.*;
@@ -118,14 +116,13 @@ public class DenunciaServiceTest {
         assertThatThrownBy(() -> denunciaService.getDenunciaById(id)).isInstanceOf(EntityNotFoundException.class);
     }
 
-    //Necessica melhora
+    @DisplayName("Deve retornar todas as denuncias")
     @Test
     public void getAllDenuncia_DeveRetornarPaginaDeDtoResponse() {
         // Arrange
-        Pageable pageable = PageRequest.of(0, 20);
-        List<Denuncia> denuncias = criarDenuncias();
-        Page<Denuncia> paginaDenuncias = new PageImpl<>(denuncias, pageable,
-                denuncias.size());
+        Pageable pageable = TesteUtil.criarPageable(0,20);
+        List<Denuncia> denuncias = criarDenunciasPadrao();
+        Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denuncias, pageable);
 
         when(denunciaRepository.findAll(pageable)).thenReturn(paginaDenuncias);
 
@@ -137,7 +134,9 @@ public class DenunciaServiceTest {
         Page<DenunciaDetalhadaDtoResponse> resultado = denunciaService.getAllDenuncia(pageable);
 
         // Assert
+        assertThat(resultado).isNotEmpty();
         assertEquals(dtoResponsesSimulados.size(), resultado.getContent().size());
+        assertThat(resultado).hasSize(2);
         assertEquals(dtoResponsesSimulados, resultado.getContent());
     }
 
@@ -166,19 +165,5 @@ public class DenunciaServiceTest {
         assertEquals(dtoResponse, dtoResponseReal); // O DTO de resposta deve corresponder ao esperado após a atualização;
         assertEquals(dtoRequest.statusDenuncia(), denuncia.getStatusDenuncia()); //O status da denúncia deve ser atualizado corretamente;
 
-    }
-
-
-    private List<Denuncia> criarDenuncias() {
-        List<Denuncia> denunciasList = new ArrayList();
-
-        Denuncia denuncia1 = new Denuncia("Endereço 1", "Coordenadas", TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO,
-                "Descrição");
-        Denuncia denuncia2 = new Denuncia("Endereço 2", "Coordenadas", TipoDenuncia.QUEIMADA_URBANA, "Descrição");
-
-        denunciasList.add(denuncia1);
-        denunciasList.add(denuncia2);
-
-        return denunciasList;
     }
 }
