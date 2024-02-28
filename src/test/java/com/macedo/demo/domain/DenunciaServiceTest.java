@@ -19,8 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.macedo.demo.domain.builders.DenunciaBuilder.criarDenunciasPadrao;
@@ -165,5 +164,11 @@ public class DenunciaServiceTest {
         assertEquals(dtoResponse, dtoResponseReal); // O DTO de resposta deve corresponder ao esperado após a atualização;
         assertEquals(dtoRequest.statusDenuncia(), denuncia.getStatusDenuncia()); //O status da denúncia deve ser atualizado corretamente;
 
+    }
+    @Test
+    public void getDenunciasPorPeriodo_DeveRetornarDenunciasDtoResponse(){
+        Pageable pageable = TesteUtil.criarPageable(0,20);
+        List<Denuncia> denuncias = criarDenunciasPadrao();
+        Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denuncias, pageable);
     }
 }
