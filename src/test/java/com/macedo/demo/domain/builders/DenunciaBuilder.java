@@ -105,8 +105,11 @@ public class DenunciaBuilder {
 
     public static List<Denuncia> criarDenunciasPadrao(){
         return Arrays.asList(
-                umaDenunciaPadrao().build(),
-                umaDenunciaPadrao().build()
+                new Denuncia("Rua A","111111",TipoDenuncia.DESMATAMENTO_URBANO,"DESMATAMENTO URBANO"),
+                new Denuncia("Rua B","222222",TipoDenuncia.DESMATAMENTO_RURAL,"DESMATAMENTO RURAL"),
+                new Denuncia("Rua C","333333",TipoDenuncia.QUEIMADA_RURAL,"QUEIMADA RURAL"),
+                new Denuncia("Rua D","4444444",TipoDenuncia.QUEIMADA_DE_LIXO_DOMESTICO,"QUEIMADA DE LIXO DOMESTICO"),
+                new Denuncia("Rua E","5555555",TipoDenuncia.QUEIMADA_URBANA,"QUEIMADA URBANA")
         );
     }
 }
