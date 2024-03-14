@@ -19,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -166,9 +168,26 @@ public class DenunciaServiceTest {
 
     }
     @Test
+    @DisplayName("Deve trazer todas as denuncias de um determinado periodo")
     public void getDenunciasPorPeriodo_DeveRetornarDenunciasDtoResponse(){
-        Pageable pageable = TesteUtil.criarPageable(0,20);
+
+        //Arrange
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = now.withDayOfMonth(1);
+        LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
+
+        Pageable pageable = TesteUtil.criarPageable(0,10);
         List<Denuncia> denuncias = criarDenunciasPadrao();
         Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denuncias, pageable);
+
+        when(denunciaRepository.findByDataDenunciaBetween(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX), pageable))
+                .thenReturn(paginaDenuncias);
+
+        //Act
+        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorPeriodo(startDate, endDate,pageable);
+
+        //Assert
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(denuncias.size());
     }
 }
