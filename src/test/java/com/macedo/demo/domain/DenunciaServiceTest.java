@@ -217,4 +217,37 @@ public class DenunciaServiceTest {
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(1);
     }
+    @Test
+    @DisplayName("Deve trazer todas as denuncias de um determinado periodo e tipo")
+    public void getDenunciasPorPeriodoETipo_DeveRetornarDenunciasDtoResponse(){
+
+        //Arrange
+
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = now.withDayOfMonth(1);
+        LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
+
+        var tipo = TipoDenuncia.DESMATAMENTO_RURAL;
+
+        Pageable pageable = TesteUtil.criarPageable(0,10);
+        List<Denuncia> denuncias = criarDenunciasPadrao();
+
+        List<Denuncia> denunciasFiltradas = denuncias.stream()
+                .filter(denuncia -> denuncia.getTipoDenuncia() == tipo)
+                .filter(denuncia -> !denuncia.getDataDenuncia().isBefore(startDate.atStartOfDay()) &&
+                        !denuncia.getDataDenuncia().isAfter(endDate.atTime(LocalTime.MAX)))
+                .collect(Collectors.toList());
+
+        Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denunciasFiltradas, pageable);
+
+        when(denunciaRepository.findByTipoDenuncia(tipo, pageable)).thenReturn(paginaDenuncias);
+
+        //Act
+        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorTipo(tipo,pageable);
+
+        //Assert
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(1
+        );
+    }
 }
