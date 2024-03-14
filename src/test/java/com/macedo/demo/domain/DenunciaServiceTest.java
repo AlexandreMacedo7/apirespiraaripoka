@@ -7,6 +7,7 @@ import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
+import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
 import com.macedo.demo.domain.util.TesteUtil;
@@ -249,5 +250,32 @@ public class DenunciaServiceTest {
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(1
         );
+    }
+
+    @Test
+    @DisplayName("Deve trazer todas as denuncias de um status")
+    public void getDenunciasPorStatus_DeveRetornarDenunciasDtoResponse(){
+
+        //Arrange
+
+        var status = StatusDenuncia.RECEBIDA;
+
+        Pageable pageable = TesteUtil.criarPageable(0,10);
+        List<Denuncia> denuncias = criarDenunciasPadrao();
+
+        List<Denuncia> denunciasTipo = denuncias.stream()
+                .filter(denuncia -> denuncia.getStatusDenuncia() == status)
+                .collect(Collectors.toList());
+
+        Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denunciasTipo, pageable);
+
+        when(denunciaRepository.findByStatus(status, pageable)).thenReturn(paginaDenuncias);
+
+        //Act
+        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciaStatus(status, pageable);
+
+        //Assert
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(5);
     }
 }
