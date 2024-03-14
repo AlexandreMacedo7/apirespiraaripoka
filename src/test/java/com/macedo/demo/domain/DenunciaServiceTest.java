@@ -7,6 +7,7 @@ import com.macedo.apirespiraaripoka.entity.dto.CriarDenunciaDtoRequest;
 import com.macedo.apirespiraaripoka.entity.dto.DenunciaDetalhadaDtoResponse;
 import com.macedo.apirespiraaripoka.repository.DenunciaRepository;
 import com.macedo.apirespiraaripoka.service.DenunciaService;
+import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
 import com.macedo.demo.domain.util.TesteUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -189,5 +190,31 @@ public class DenunciaServiceTest {
         //Assert
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(denuncias.size());
+    }
+    @Test
+    @DisplayName("Deve trazer todas as denuncias de um determinado tipo")
+    public void getDenunciasPorTipo_DeveRetornarDenunciasDtoResponse(){
+
+        //Arrange
+
+        var tipo = TipoDenuncia.DESMATAMENTO_RURAL;
+
+        Pageable pageable = TesteUtil.criarPageable(0,10);
+        List<Denuncia> denuncias = criarDenunciasPadrao();
+
+        List<Denuncia> denunciasTipo = denuncias.stream()
+                .filter(denuncia -> denuncia.getTipoDenuncia() == tipo)
+                .collect(Collectors.toList());
+
+        Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denunciasTipo, pageable);
+
+        when(denunciaRepository.findByTipoDenuncia(tipo, pageable)).thenReturn(paginaDenuncias);
+
+        //Act
+        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorTipo(tipo,pageable);
+
+        //Assert
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(1);
     }
 }
