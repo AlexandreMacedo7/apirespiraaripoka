@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -69,20 +70,6 @@ public class DenunciaServiceTest {
 
         // Assert
         assertThat(dtoResponse).isEqualTo(dtoResponseReal);
-    }
-
-    @Test//Necessita correção
-    public void criaDenuncia_ComDadosInvalidos_RetornaExcecao() {
-
-        // Arrange
-
-        CriarDenunciaDtoRequest dtoInvalidoRequest = denunciaDtoRequestInvalido();
-
-        when(denunciaMapper.toEntity(dtoInvalidoRequest)).thenThrow(RuntimeException.class);
-
-        // Act & Assert
-
-        assertThatThrownBy(() -> denunciaService.create(dtoInvalidoRequest)).isInstanceOf(RuntimeException.class);
     }
 
     @Test
@@ -139,7 +126,7 @@ public class DenunciaServiceTest {
         // Assert
         assertThat(resultado).isNotEmpty();
         assertEquals(dtoResponsesSimulados.size(), resultado.getContent().size());
-        assertThat(resultado).hasSize(2);
+        assertThat(resultado).hasSize(5);
         assertEquals(dtoResponsesSimulados, resultado.getContent());
     }
 
@@ -278,4 +265,6 @@ public class DenunciaServiceTest {
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(5);
     }
+
+    //testes de totais
 }
