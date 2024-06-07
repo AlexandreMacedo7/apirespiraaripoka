@@ -20,16 +20,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.macedo.demo.domain.builders.DenunciaBuilder.criarDenunciasPadrao;
 import static com.macedo.demo.domain.builders.DenunciaBuilder.umaDenuncia;
-import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.*;
+import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.denunciaDtoRequestValido;
+import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.novoStatusDenunciaDtoRequest;
 import static com.macedo.demo.domain.builders.DenunciaDTOResponseBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,7 +44,6 @@ public class DenunciaServiceTest {
 
     @InjectMocks
     private DenunciaService denunciaService;
-
     @Mock
     private DenunciaRepository denunciaRepository;
 
@@ -110,7 +110,7 @@ public class DenunciaServiceTest {
     @Test
     public void getAllDenuncia_DeveRetornarPaginaDeDtoResponse() {
         // Arrange
-        Pageable pageable = TesteUtil.criarPageable(0,20);
+        Pageable pageable = TesteUtil.criarPageable(0, 20);
         List<Denuncia> denuncias = criarDenunciasPadrao();
         Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denuncias, pageable);
 
@@ -156,16 +156,17 @@ public class DenunciaServiceTest {
         assertEquals(dtoRequest.statusDenuncia(), denuncia.getStatusDenuncia()); //O status da denúncia deve ser atualizado corretamente;
 
     }
+
     @Test
     @DisplayName("Deve trazer todas as denuncias de um determinado periodo")
-    public void getDenunciasPorPeriodo_DeveRetornarDenunciasDtoResponse(){
+    public void getDenunciasPorPeriodo_DeveRetornarDenunciasDtoResponse() {
 
         //Arrange
         LocalDate now = LocalDate.now();
         LocalDate startDate = now.withDayOfMonth(1);
         LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
 
-        Pageable pageable = TesteUtil.criarPageable(0,10);
+        Pageable pageable = TesteUtil.criarPageable(0, 10);
         List<Denuncia> denuncias = criarDenunciasPadrao();
         Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denuncias, pageable);
 
@@ -173,21 +174,22 @@ public class DenunciaServiceTest {
                 .thenReturn(paginaDenuncias);
 
         //Act
-        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorPeriodo(startDate, endDate,pageable);
+        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorPeriodo(startDate, endDate, pageable);
 
         //Assert
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(denuncias.size());
     }
+
     @Test
     @DisplayName("Deve trazer todas as denuncias de um determinado tipo")
-    public void getDenunciasPorTipo_DeveRetornarDenunciasDtoResponse(){
+    public void getDenunciasPorTipo_DeveRetornarDenunciasDtoResponse() {
 
         //Arrange
 
         var tipo = TipoDenuncia.DESMATAMENTO_RURAL;
 
-        Pageable pageable = TesteUtil.criarPageable(0,10);
+        Pageable pageable = TesteUtil.criarPageable(0, 10);
         List<Denuncia> denuncias = criarDenunciasPadrao();
 
         List<Denuncia> denunciasTipo = denuncias.stream()
@@ -199,15 +201,16 @@ public class DenunciaServiceTest {
         when(denunciaRepository.findByTipoDenuncia(tipo, pageable)).thenReturn(paginaDenuncias);
 
         //Act
-        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorTipo(tipo,pageable);
+        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorTipo(tipo, pageable);
 
         //Assert
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(1);
     }
+
     @Test
     @DisplayName("Deve trazer todas as denuncias de um determinado periodo e tipo")
-    public void getDenunciasPorPeriodoETipo_DeveRetornarDenunciasDtoResponse(){
+    public void getDenunciasPorPeriodoETipo_DeveRetornarDenunciasDtoResponse() {
 
         //Arrange
 
@@ -217,7 +220,7 @@ public class DenunciaServiceTest {
 
         var tipo = TipoDenuncia.DESMATAMENTO_RURAL;
 
-        Pageable pageable = TesteUtil.criarPageable(0,10);
+        Pageable pageable = TesteUtil.criarPageable(0, 10);
         List<Denuncia> denuncias = criarDenunciasPadrao();
 
         List<Denuncia> denunciasFiltradas = denuncias.stream()
@@ -231,7 +234,7 @@ public class DenunciaServiceTest {
         when(denunciaRepository.findByTipoDenuncia(tipo, pageable)).thenReturn(paginaDenuncias);
 
         //Act
-        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorTipo(tipo,pageable);
+        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorTipo(tipo, pageable);
 
         //Assert
         assertThat(result).isNotEmpty();
@@ -241,13 +244,13 @@ public class DenunciaServiceTest {
 
     @Test
     @DisplayName("Deve trazer todas as denuncias de um status")
-    public void getDenunciasPorStatus_DeveRetornarDenunciasDtoResponse(){
+    public void getDenunciasPorStatus_DeveRetornarDenunciasDtoResponse() {
 
         //Arrange
 
         var status = StatusDenuncia.RECEBIDA;
 
-        Pageable pageable = TesteUtil.criarPageable(0,10);
+        Pageable pageable = TesteUtil.criarPageable(0, 10);
         List<Denuncia> denuncias = criarDenunciasPadrao();
 
         List<Denuncia> denunciasTipo = denuncias.stream()
@@ -266,5 +269,4 @@ public class DenunciaServiceTest {
         assertThat(result).hasSize(5);
     }
 
-    //testes de totais
 }
