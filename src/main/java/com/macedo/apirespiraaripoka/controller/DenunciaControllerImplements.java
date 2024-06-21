@@ -68,13 +68,6 @@ public class DenunciaControllerImplements implements DenunciaInterface {
         return ResponseEntity.ok().body(page);
     }
 
-    @DeleteMapping("/analise/{id}")
-    @Override
-    public ResponseEntity<?> deleteById(@PathVariable Long id) {
-        service.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping("/analise/{id}")
     public ResponseEntity<DenunciaDetalhadaDtoResponse> updateDenuncia(@PathVariable Long id,
                                                                        @RequestBody AtualizarStatusDenunciaDtoRequest dtoRequest) {

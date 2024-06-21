@@ -52,10 +52,6 @@ public class DenunciaService {
         return denuncias.map(mapper::toDto);
     }
 
-    public void deleteById(Long id) {
-        repository.deleteById(id);
-    }
-
     @Transactional
     public DenunciaDetalhadaDtoResponse updateDenuncia(Long id, AtualizarStatusDenunciaDtoRequest dtoRequest) {
 

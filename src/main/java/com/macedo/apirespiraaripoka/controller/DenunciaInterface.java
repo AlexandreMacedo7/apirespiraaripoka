@@ -16,6 +16,5 @@ public interface DenunciaInterface {
 
     ResponseEntity<Page<DenunciaDetalhadaDtoResponse>> getAllDenuncia(Pageable pageable);
 
-    ResponseEntity<?> deleteById(Long id);
     ResponseEntity<DenunciaDetalhadaDtoResponse> updateDenuncia(Long id, AtualizarStatusDenunciaDtoRequest dtoRequest);
 }
