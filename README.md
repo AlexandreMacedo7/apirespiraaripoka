@@ -1,79 +1,71 @@
-API Respira Aripoka
+# API Respira Aripoka
 
-A API Respira Aripoka é uma aplicação desenvolvida em Java, utilizando o framework Spring Boot e banco de dados MySQL. Ela permite aos usuários fazerem denúncias anonimamente, fornecendo uma plataforma segura e confiável para relatar incidentes.
-Funcionalidades
+## 📝 Overview
 
-A API oferece as seguintes funcionalidades:
+API Respira Aripoka is a Java-based Spring Boot application for anonymous complaint reporting, featuring secure data handling with MySQL database integration.
 
-    Criação de Denúncias: Permite aos usuários criar novas denúncias de forma anônima, fornecendo detalhes sobre o incidente.
+## 🎯 Core Features
 
-    Consulta de Denúncias por ID: Permite aos usuários consultar uma denúncia específica com base no seu ID.
+- **Anonymous Reporting**: Submit complaints securely without revealing identity
+- **Efficient Management**: CRUD operations for complaints
+- **Smart Filtering**: Search by period, type, and status
+- **Analytics Dashboard**: Statistical insights on reported cases
+- **Administrative Controls**: Status updates and complaint management
 
-    Listagem de Denúncias: Fornece uma lista paginada de todas as denúncias disponíveis para análise.
+## 🛠️ Technical Stack
 
-    Exclusão de Denúncias: Permite aos administradores excluir denúncias do sistema.
+- Java 17
+- Spring Boot 3.x
+- MySQL
+- Maven
+- JUnit 5
+- Spring Data JPA
 
-    Atualização de Status de Denúncias: Permite aos administradores atualizar o status de uma denúncia, indicando se foi resolvida, em andamento, etc.
+## 🔄 API Endpoints
 
-    Consulta de Denúncias por Período: Permite filtrar denúncias por um período específico, proporcionando insights sobre tendências ao longo do tempo.
+### Complaint Management
+```http
+POST    /v1/denuncia                      # Create complaint
+GET     /v1/denuncia/{id}                 # Get by ID
+GET     /v1/denuncia/analise             # List all (paginated)
+DELETE  /v1/denuncia/gerenciar/{id}      # Delete
+PUT     /v1/denuncia/analise/{id}        # Update status
+GET     /v1/denuncia/analise/por-periodo      # Period filter
+GET     /v1/denuncia/analise/por-tipo         # Type filter
+GET     /v1/denuncia/analise/por-periodo-tipo # Combined filter
+GET     /v1/denuncia/analise/por-status       # Status filter
+GET     /v1/denuncia/analise/estatisticas     # Statistics
 
-    Consulta de Denúncias por Tipo: Permite filtrar denúncias por tipo específico, como ambiental, social, entre outros.
-
-    Consulta de Denúncias por Período e Tipo: Permite combinar filtros de período e tipo para obter informações mais detalhadas.
-
-    Consulta de Denúncias por Status: Permite filtrar denúncias por status, como pendente, resolvida, etc.
-
-    Estatísticas de Denúncias: Fornece estatísticas sobre as denúncias registradas, como total de denúncias, média de tempo para resolução, etc.
-
-Endpoints
-
-A API expõe os seguintes endpoints:
-
-    POST /v1/denuncia: Cria uma nova denúncia.
-
-    GET /v1/denuncia/{id}: Consulta uma denúncia específica pelo seu ID.
-
-    GET /v1/denuncia/analise: Retorna uma lista paginada de todas as denúncias disponíveis.
-
-    DELETE /v1/denuncia/gerenciar/{id}: Exclui uma denúncia com base no seu ID.
-
-    PUT /v1/denuncia/analise/{id}: Atualiza o status de uma denúncia específica.
-
-    GET /v1/denuncia/analise/por-periodo: Filtra denúncias por um período específico.
-
-    GET /v1/denuncia/analise/por-tipo: Filtra denúncias por tipo específico.
-
-    GET /v1/denuncia/analise/por-periodo-tipo: Combina filtros de período e tipo para obter denúncias específicas.
-
-    GET /v1/denuncia/analise/por-status: Filtra denúncias por status específico.
-
-    GET /v1/denuncia/analise/estatisticas: Retorna estatísticas sobre as denúncias registradas.
-
-Tecnologias Utilizadas
-
-    Java
-    Spring Boot
-    MySQL
-
-Configuração de Ambiente
-
-A API está configurada para ser executada na porta padrão 8080.
-Uso
-
-Para utilizar a API, os usuários podem enviar requisições HTTP aos endpoints fornecidos, de acordo com a funcionalidade desejada.
-
-Exemplo de requisição para criar uma nova denúncia:
-
-
+📋 Request Example
 POST /v1/denuncia
+{
+    "endereco": "Rua Example, 123",
+    "coordenadasGeograficas": "123.456, -789.012",
+    "tipo": "AMBIENTAL",
+    "descricao": "Complaint description"
+}
+🚀 Setup Guide
+Clone the repository
+git clone [repository-url]
 
-    Body:
-    {
-      "endereço": "Rua x",
-      "cordenadasGeograficas": "**** **** ****",
-      ...
-    }
+Configure application.properties
+spring.datasource.url=jdbc:mysql://localhost:3306/db_name
+spring.datasource.username=your_username
+spring.datasource.password=your_password
 
-Contribuindo
+Build and run
+mvn clean install
+mvn spring-boot:run
 
-Contribuições para melhorias na API são bem-vindas! Se você encontrar problemas ou tiver sugestões de novos recursos, sinta-se à vontade para abrir uma issue ou enviar um pull request.
+Application runs on http://localhost:8080
+🧪 Testing
+Run tests using:
+mvn test
+
+🤝 Contributing
+Fork the repository
+Create feature branch
+Commit changes
+Open Pull Request
+📄 License
+This project is under the MIT License.
