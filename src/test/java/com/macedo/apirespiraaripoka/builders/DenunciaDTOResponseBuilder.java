@@ -1,4 +1,4 @@
-package com.macedo.demo.domain.builders;
+package com.macedo.apirespiraaripoka.builders;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
 import com.macedo.apirespiraaripoka.entity.dto.ConsultaStatusDenunciaDtoResponse;

@@ -59,6 +59,10 @@ public class DenunciaService {
     @Transactional
     public DenunciaDetalhadaDtoResponse updateDenuncia(Long id, AtualizarStatusDenunciaDtoRequest dtoRequest) {
 
+        if (dtoRequest.statusDenuncia() == null) {
+            throw new IllegalArgumentException("Status da denúncia não pode ser nulo");
+        }
+
         Denuncia denuncia = findById(id);
 
         denuncia.atualizaStatusDenuncia(dtoRequest.statusDenuncia());
@@ -69,6 +73,10 @@ public class DenunciaService {
     }
 
     public Page<DenunciaDetalhadaDtoResponse> getDenunciasPorPeriodo(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Data inicial não pode ser posterior à data final");
+        }
 
         Page<Denuncia> denuncias = repository.findByDataDenunciaBetween(startDate.atStartOfDay(),
                 endDate.atTime(LocalTime.MAX), pageable);

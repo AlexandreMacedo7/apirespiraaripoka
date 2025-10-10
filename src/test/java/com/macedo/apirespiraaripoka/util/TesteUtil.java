@@ -1,4 +1,4 @@
-package com.macedo.demo.domain.util;
+package com.macedo.apirespiraaripoka.util;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
