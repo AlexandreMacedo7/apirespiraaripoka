@@ -1,4 +1,4 @@
-package com.macedo.demo.domain;
+package com.macedo.apirespiraaripoka;
 
 import com.macedo.apirespiraaripoka.entity.Denuncia;
 import com.macedo.apirespiraaripoka.entity.dto.AtualizarStatusDenunciaDtoRequest;
@@ -10,13 +10,16 @@ import com.macedo.apirespiraaripoka.service.DenunciaService;
 import com.macedo.apirespiraaripoka.util.enums.StatusDenuncia;
 import com.macedo.apirespiraaripoka.util.enums.TipoDenuncia;
 import com.macedo.apirespiraaripoka.util.mapper.DenunciaMapper;
-import com.macedo.demo.domain.util.TesteUtil;
+import com.macedo.apirespiraaripoka.util.TesteUtil;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.never;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,14 +27,15 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.macedo.demo.domain.builders.DenunciaBuilder.criarDenunciasPadrao;
-import static com.macedo.demo.domain.builders.DenunciaBuilder.umaDenuncia;
-import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.denunciaDtoRequestValido;
-import static com.macedo.demo.domain.builders.DenunciaDTORequestBuilder.novoStatusDenunciaDtoRequest;
-import static com.macedo.demo.domain.builders.DenunciaDTOResponseBuilder.*;
+import static com.macedo.apirespiraaripoka.builders.DenunciaBuilder.criarDenunciasPadrao;
+import static com.macedo.apirespiraaripoka.builders.DenunciaBuilder.umaDenuncia;
+import static com.macedo.apirespiraaripoka.builders.DenunciaDTORequestBuilder.denunciaDtoRequestValido;
+import static com.macedo.apirespiraaripoka.builders.DenunciaDTORequestBuilder.novoStatusDenunciaDtoRequest;
+import static com.macedo.apirespiraaripoka.builders.DenunciaDTOResponseBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,13 +74,14 @@ public class DenunciaServiceTest {
 
         // Assert
         assertThat(dtoResponse).isEqualTo(dtoResponseReal);
+        verify(denunciaMapper).toEntity(dtoRequest);
+        verify(denunciaRepository).save(any(Denuncia.class));
+        verify(denunciaMapper).toDto(denuncia);
     }
 
     @Test
-    @DisplayName("Deve consultar uma denuncia por id, e retornar um dto response")
+    @DisplayName("Deve consultar uma denuncia por id")
     public void getDenunciaId_Existente_RetornaDto() {
-
-        // Arrange
         Long id = 1L;
         Denuncia denuncia = umaDenuncia().umaDenunciaPadrao().build();
         ConsultaStatusDenunciaDtoResponse dtoResponse = consultaStatusDenunciaDtoResponse();
@@ -84,14 +89,12 @@ public class DenunciaServiceTest {
         when(denunciaRepository.findById(id)).thenReturn(Optional.of(denuncia));
         when(denunciaMapper.toDtoConsulta(denuncia)).thenReturn(dtoResponse);
 
-        // Act
-        ConsultaStatusDenunciaDtoResponse dtoResponseReal = denunciaService.getDenunciaById(id);
+        ConsultaStatusDenunciaDtoResponse resultado = denunciaService.getDenunciaById(id);
 
-        // Assert
-
+        assertThat(resultado)
+            .isNotNull()
+            .isEqualTo(dtoResponse);
         verify(denunciaMapper).toDtoConsulta(denuncia);
-        assertEquals(dtoResponse, dtoResponseReal);
-
     }
 
     @Test
@@ -211,35 +214,26 @@ public class DenunciaServiceTest {
     @Test
     @DisplayName("Deve trazer todas as denuncias de um determinado periodo e tipo")
     public void getDenunciasPorPeriodoETipo_DeveRetornarDenunciasDtoResponse() {
-
-        //Arrange
-
-        LocalDate now = LocalDate.now();
-        LocalDate startDate = now.withDayOfMonth(1);
-        LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
-
-        var tipo = TipoDenuncia.DESMATAMENTO_RURAL;
-
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusDays(7);
+        TipoDenuncia tipo = TipoDenuncia.DESMATAMENTO_RURAL;
         Pageable pageable = TesteUtil.criarPageable(0, 10);
+
         List<Denuncia> denuncias = criarDenunciasPadrao();
+        Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denuncias, pageable);
 
-        List<Denuncia> denunciasFiltradas = denuncias.stream()
-                .filter(denuncia -> denuncia.getTipoDenuncia() == tipo)
-                .filter(denuncia -> !denuncia.getDataDenuncia().isBefore(startDate.atStartOfDay()) &&
-                        !denuncia.getDataDenuncia().isAfter(endDate.atTime(LocalTime.MAX)))
-                .collect(Collectors.toList());
+        when(denunciaRepository.findByDataDenunciaBetweenAndTipoDenuncia(
+                startDate.atStartOfDay(),
+                endDate.atTime(LocalTime.MAX),
+                tipo,
+                pageable
+        )).thenReturn(paginaDenuncias);
 
-        Page<Denuncia> paginaDenuncias = TesteUtil.criarPagina(denunciasFiltradas, pageable);
+        Page<DenunciaDetalhadaDtoResponse> resultado =
+                denunciaService.getDenunciasPorPeriodoETipo(startDate, endDate, tipo, pageable);
 
-        when(denunciaRepository.findByTipoDenuncia(tipo, pageable)).thenReturn(paginaDenuncias);
-
-        //Act
-        Page<DenunciaDetalhadaDtoResponse> result = denunciaService.getDenunciasPorTipo(tipo, pageable);
-
-        //Assert
-        assertThat(result).isNotEmpty();
-        assertThat(result).hasSize(1
-        );
+        assertThat(resultado).isNotEmpty();
+        assertThat(resultado.getContent()).hasSize(5);
     }
 
     @Test
@@ -267,6 +261,70 @@ public class DenunciaServiceTest {
         //Assert
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(5);
+    }
+
+    @Test
+    @DisplayName("Deve retornar total de denúncias")
+    public void getTotalDenuncias_DeveRetornarQuantidadeCorreta() {
+        when(denunciaRepository.count()).thenReturn(5L);
+        long total = denunciaService.getTotalDenuncias();
+        assertThat(total).isEqualTo(5L);
+    }
+
+    @Test
+    @DisplayName("Deve retornar total de denúncias por tipo")
+    public void getTotalDenunciasPorTipo_DeveRetornarMapaCorreto() {
+        List<Denuncia> denuncias = criarDenunciasPadrao();
+        when(denunciaRepository.findAll()).thenReturn(denuncias);
+
+        Map<TipoDenuncia, Long> resultado = denunciaService.getTotalDenunciasPorTipo();
+
+        assertThat(resultado)
+                .containsKey(TipoDenuncia.DESMATAMENTO_RURAL)
+                .containsValues(1L);
+    }
+    @Test
+    @DisplayName("Deve retornar total de denúncias por status")
+    public void getTotalDenunciasPorStatus_DeveRetornarMapaCorreto() {
+        List<Denuncia> denuncias = criarDenunciasPadrao();
+        when(denunciaRepository.findAll()).thenReturn(denuncias);
+
+        Map<StatusDenuncia, Long> resultado = denunciaService.getTotalDenunciasPorStatus();
+
+        assertThat(resultado)
+                .containsKey(StatusDenuncia.RECEBIDA)
+                .containsValues(5L);
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao buscar denúncias com datas inválidas")
+    public void getDenunciasPorPeriodo_DataFinalMenorQueInicial_DeveLancarExcecao() {
+        // Arrange
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.plusDays(1);
+        Pageable pageable = TesteUtil.criarPageable(0, 10);
+
+        // Act & Assert
+        assertThatThrownBy(() ->
+            denunciaService.getDenunciasPorPeriodo(startDate, endDate, pageable))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Data inicial não pode ser posterior à data final");
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao atualizar status com valor nulo")
+    public void updateDenuncia_StatusNulo_DeveLancarExcecao() {
+        // Arrange
+        Long id = 1L;
+        AtualizarStatusDenunciaDtoRequest request = new AtualizarStatusDenunciaDtoRequest(null);
+
+        // Act & Assert
+        assertThatThrownBy(() -> denunciaService.updateDenuncia(id, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Status da denúncia não pode ser nulo");
+
+        verify(denunciaRepository, never()).findById(any());
+        verify(denunciaRepository, never()).save(any());
     }
 
 }
