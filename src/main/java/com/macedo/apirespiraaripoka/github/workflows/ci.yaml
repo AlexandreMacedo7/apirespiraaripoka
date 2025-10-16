@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ teste ]
+  pull_request:
+    branches: [ teste ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Instalar dependências e rodar testes
+        run: mvn clean install
